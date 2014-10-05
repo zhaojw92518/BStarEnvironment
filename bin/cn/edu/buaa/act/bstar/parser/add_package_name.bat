@@ -1,0 +1,1 @@
+java -jar .\PackageName.jar "package cn.edu.buaa.act.bstar.parser"
