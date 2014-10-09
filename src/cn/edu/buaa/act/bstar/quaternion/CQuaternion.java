@@ -1,11 +1,12 @@
 package cn.edu.buaa.act.bstar.quaternion;
 
 import cn.edu.buaa.act.bstar.global.CGlobalDef;
+import cn.edu.buaa.act.bstar.global.CMath;
 
 public class CQuaternion{
-	
 	public QuaType type = null;
 	public CQuaData data_0 = null, data_1 = null, data_2 = null;
+	public int line_num = -1;
 	
 	public CQuaternion(){
 		
@@ -55,6 +56,8 @@ public class CQuaternion{
 			return_result.append("|");
 			return_result.append(get_data_str(data_2));
 			return_result.append("|");
+			return_result.append(get_single_table_str(CMath.int_to_str(line_num)));
+			return_result.append("|");
 			return_result.append(CGlobalDef.endl);
 			String empty_str = new String();
 			for(int i = 1; i < data_0.list_data.size(); i++){
@@ -78,9 +81,10 @@ public class CQuaternion{
 			return_result.append("|");
 			return_result.append(get_data_str(data_2));
 			return_result.append("|");
+			return_result.append(get_single_table_str(CMath.int_to_str(line_num)));
+			return_result.append("|");
 			return_result.append(CGlobalDef.endl);
 		}
 		return return_result.toString();
 	}
-	
 }

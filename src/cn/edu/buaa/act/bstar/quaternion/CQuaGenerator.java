@@ -149,13 +149,15 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 					QuaType.CDT_CONJ, 
 					first_data, 
 					visitPro_term_e(ctx.pro_term_e(1)),
-					return_result));
+					return_result,
+					ctx.pro_term_e(1).start.getLine()));
 			for(int i = 2; i < ctx.pro_term_e().size(); i++){
 				add_qua(CQuaFactory.create_qua(
 						QuaType.CDT_CONJ, 
 						return_result, 
 						visitPro_term_e(ctx.pro_term_e(i)),
-						return_result));
+						return_result,
+						ctx.pro_term_e(i).start.getLine()));
 			}
 		}
 		return return_result; 
@@ -189,7 +191,8 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 				add_qua(CQuaFactory.create_qua(
 						QuaType.FUNC_PARA, 
 						cur_id,
-						cur_type
+						cur_type,
+						ctx.point_id(i).start.getLine()
 						));
 			}
 		}
@@ -278,13 +281,15 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 					QuaType.CDT_IMPL, 
 					first_data, 
 					visitOr_pro_e(ctx.or_pro_e(1)),
-					return_result));
+					return_result,
+					ctx.or_pro_e(1).start.getLine()));
 			for(int i = 2; i < ctx.or_pro_e().size(); i++){
 				add_qua(CQuaFactory.create_qua(
 						QuaType.CDT_IMPL, 
 						return_result, 
 						visitOr_pro_e(ctx.or_pro_e(i)),
-						return_result));
+						return_result,
+						ctx.or_pro_e(i).start.getLine()));
 			}
 		}
 		return return_result; 
@@ -309,7 +314,8 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 						cur_latter.start.getType(), 
 						return_result, 
 						visitMse(cur_latter.mse()), 
-						condition_result));
+						condition_result,
+						cur_latter.start.getLine()));
 				return_result = condition_result;
 			}
 		}
@@ -338,7 +344,8 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 						QuaType.CST_DEFINE, 
 						cur_id, 
 						temp_type, 
-						element_result
+						element_result,
+						ctx.point_id(i).start.getLine()
 						)
 				);
 		}
@@ -356,10 +363,11 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 		add_qua(CQuaFactory.create_qua(
 				QuaType.FUNC_DEFINE, 
 				visitPoint_id(ctx.point_id()), 
-				visitType(ctx.type())));
+				visitType(ctx.type()),
+				ctx.point_id().start.getLine()));
 		visitPara_define_list(ctx.para_define_list());
 		visitCom_statement(ctx.com_statement());
-		add_qua(CQuaFactory.create_qua(QuaType.FUNC_DEFINE_END));
+		add_qua(CQuaFactory.create_qua(QuaType.FUNC_DEFINE_END, -1));
 		return null; 
 	}
 
@@ -374,14 +382,16 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 			add_qua(CQuaFactory.create_qua(
 					QuaType.CONTENT_OF, 
 					visitOne_e(ctx.one_e()), 
-					return_result));
+					return_result,
+					ctx.start.getLine()));
 		}
 		else{
 			return_result = get_temp_id();
 			add_qua(CQuaFactory.create_qua(
 					ctx.start.getType(), 
 					visitOne_e(ctx.one_e()), 
-					return_result));
+					return_result,
+					ctx.start.getLine()));
 		}
 		return return_result; 
 	}
@@ -436,7 +446,7 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 	 */
 	@Override public CQuaData visitFunction_call(@NotNull BStarParser.Function_callContext ctx) { 
 		visitPara_value_list(ctx.para_value_list());
-		add_qua(CQuaFactory.create_qua(QuaType.FUNC_CALL, visitId(ctx.id())));
+		add_qua(CQuaFactory.create_qua(QuaType.FUNC_CALL, visitId(ctx.id()), ctx.id().start.getLine()));
 		return null; 
 	}
 
@@ -481,14 +491,27 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 				 end_label_id = get_label_id();
 		push_start(start_label_id);
 		push_end(end_label_id);
-		add_qua(CQuaFactory.create_qua(QuaType.LABEL, start_label_id));
+		add_qua(CQuaFactory.create_qua(
+				QuaType.LABEL, 
+				start_label_id,
+				-1));
 		
-		add_qua(CQuaFactory.create_qua(QuaType.IF_NOT, visitPro_e(ctx.pro_e()), end_label_id));
+		add_qua(CQuaFactory.create_qua(
+				QuaType.IF_NOT, 
+				visitPro_e(ctx.pro_e()), 
+				end_label_id,
+				ctx.pro_e().start.getLine()));
 		
 		visitStatement(ctx.statement());
 		
-		add_qua(CQuaFactory.create_qua(QuaType.GOTO, start_label_id));
-		add_qua(CQuaFactory.create_qua(QuaType.LABEL, end_label_id));
+		add_qua(CQuaFactory.create_qua(
+				QuaType.GOTO, 
+				start_label_id,
+				-1));
+		add_qua(CQuaFactory.create_qua(
+				QuaType.LABEL, 
+				end_label_id,
+				-1));
 		pop_start();
 		pop_end();
 		return null; 
@@ -497,7 +520,10 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 	@Override public CQuaData visitBreak_stat(@NotNull BStarParser.Break_statContext ctx) {
 		CQuaData cur_end_id = get_cur_end();
 		if(cur_end_id != null){
-			add_qua(CQuaFactory.create_qua(QuaType.GOTO, cur_end_id));
+			add_qua(CQuaFactory.create_qua(
+					QuaType.GOTO, 
+					cur_end_id, 
+					-1));
 		}
 		else{
 			//TODO 无循环写break错误处理
@@ -508,7 +534,10 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 	@Override public CQuaData visitContinue_stat(@NotNull BStarParser.Continue_statContext ctx) {
 		CQuaData cur_start_id = get_cur_start();
 		if(cur_start_id != null){
-			add_qua(CQuaFactory.create_qua(QuaType.GOTO, cur_start_id));
+			add_qua(CQuaFactory.create_qua(
+					QuaType.GOTO, 
+					cur_start_id,
+					-1));
 		}
 		else{
 			//TODO 无循环写continue错误处理
@@ -532,7 +561,10 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 	 */
 	@Override public CQuaData visitPara_value_list(@NotNull BStarParser.Para_value_listContext ctx) { 
 		for(BStarParser.ElementContext cur_element: ctx.element()){
-			add_qua(CQuaFactory.create_qua(QuaType.CALL_PARA, visitElement(cur_element)));
+			add_qua(CQuaFactory.create_qua(
+					QuaType.CALL_PARA, 
+					visitElement(cur_element),
+					cur_element.start.getLine()));
 		}
 		return null; 
 	}
@@ -591,14 +623,15 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 					ctx.mse_1_latter(0).start.getType(), 
 					return_result, 
 					visitMse_0(ctx.mse_1_latter(0).mse_0()), 
-					compute_result));
+					compute_result,
+					ctx.mse_1_latter(0).start.getLine()));
 			for(int i = 1; i < ctx.mse_1_latter().size(); i++){
 				add_qua(CQuaFactory.create_qua(
 						ctx.mse_1_latter(i).start.getType(),
 						compute_result,
 						visitMse_0(ctx.mse_1_latter(i).mse_0()),
-						compute_result
-						));
+						compute_result,
+						ctx.mse_1_latter(i).start.getLine()));
 			}
 			return_result = compute_result;
 		}
@@ -615,14 +648,17 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 			for(BStarParser.Single_var_defineContext cur_var_ctx: ctx.single_var_define()){
 				CQuaData cur_id = null,
 						 temp_type = new CQuaData(cur_type);
+				int cur_line_num = -1;
 				if(cur_var_ctx.point_id() != null){
 					cur_id = visitPoint_id(cur_var_ctx.point_id());
 					++cur_id.value_data;
+					cur_line_num = cur_var_ctx.point_id().start.getLine();
 				}
 				else if(cur_var_ctx.id() != null){
 					cur_id = new CQuaData();
 					cur_id.type = QuaDataType.ID;
 					cur_id.str_data_0 = cur_var_ctx.id().getText();
+					cur_line_num = cur_var_ctx.id().start.getLine();
 				}				
 				temp_type.value_data = cur_id.value_data;
 				cur_id.value_data = 0.0;
@@ -630,15 +666,24 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 				if(cur_var_ctx.element() != null){
 					cur_element = visitElement(cur_var_ctx.element());
 				}
-				add_qua(CQuaFactory.create_qua(QuaType.VAR_DEFINE, cur_id, temp_type, cur_element));
+				add_qua(CQuaFactory.create_qua(
+						QuaType.VAR_DEFINE, 
+						cur_id, 
+						temp_type, 
+						cur_element,
+						cur_line_num));
 			}
 		}
 		else{
 			if(ctx.enum_type() != null){
-				visitEnum_type(ctx.enum_type(), visitId(ctx.id()));
+				visitEnum_type(ctx.enum_type(), visitId(ctx.id()), ctx.id().start.getLine());
 			}
 			else if(ctx.type() != null){
-				add_qua(CQuaFactory.create_qua(QuaType.TYPE_DEF, visitType(ctx.type()), visitPoint_id(ctx.point_id())));
+				add_qua(CQuaFactory.create_qua(
+						QuaType.TYPE_DEF, 
+						visitType(ctx.type()), 
+						visitPoint_id(ctx.point_id()),
+						ctx.point_id().start.getLine()));
 			}
 			else if(ctx.struct_type() != null){
 				BStarParser.Struct_typeContext cur_struct = ctx.struct_type();
@@ -653,13 +698,18 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 					id_list.add_list_data(cur_id);
 					type_list.add_list_data(cur_type);
 				}
-				add_qua(CQuaFactory.create_qua(QuaType.STRUCT_DEF, id_list, type_list, visitPoint_id(ctx.point_id())));
+				add_qua(CQuaFactory.create_qua(
+						QuaType.STRUCT_DEF, 
+						id_list, 
+						type_list, 
+						visitPoint_id(ctx.point_id()),
+						ctx.point_id().start.getLine()));
 			}
 		}
 		return null; 
 	}
 	
-	public void visitEnum_type(BStarParser.Enum_typeContext ctx, CQuaData in_name){
+	public void visitEnum_type(BStarParser.Enum_typeContext ctx, CQuaData in_name, int in_name_line_num){
 		CQuaData enum_id_list = new CQuaData(),
 				 enum_value_list = new CQuaData();
 		enum_id_list.type = QuaDataType.ID_LIST;
@@ -677,7 +727,12 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 			enum_id_list.add_list_data(cur_id);
 			enum_value_list.add_list_data(cur_value);
 		}
-		add_qua(CQuaFactory.create_qua(QuaType.ENUM_DEF, enum_id_list, enum_value_list, in_name));
+		add_qua(CQuaFactory.create_qua(
+				QuaType.ENUM_DEF, 
+				enum_id_list, 
+				enum_value_list, 
+				in_name,
+				in_name_line_num));
 	}
 	
 	/**
@@ -688,10 +743,15 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 	 */
 	@Override public CQuaData visitReturn_stat(@NotNull BStarParser.Return_statContext ctx) { 
 		if(ctx.element() != null){
-			add_qua(CQuaFactory.create_qua(QuaType.RETURN, visitElement(ctx.element())));
+			add_qua(CQuaFactory.create_qua(
+					QuaType.RETURN, 
+					visitElement(ctx.element()),
+					ctx.RETURN().getSymbol().getLine()));
 		}
 		else{
-			add_qua(CQuaFactory.create_qua(QuaType.RETURN));
+			add_qua(CQuaFactory.create_qua(
+					QuaType.RETURN,
+					ctx.RETURN().getSymbol().getLine()));
 		}
 		return null; 
 	}
@@ -708,7 +768,8 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 				QuaType.CDT_IMPL, 
 				visitOr_pro_e(ctx.or_pro_e(0)), 
 				visitOr_pro_e(ctx.or_pro_e(1)), 
-				return_result));
+				return_result,
+				ctx.IMPLICATION().getSymbol().getLine()));
 		return return_result; 
 	}
 
@@ -720,14 +781,16 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 					ctx.mse_latter(0).start.getType(),
 					return_result,
 					visitMse_1(ctx.mse_latter(0).mse_1()), 
-					compute_result)
+					compute_result,
+					ctx.mse_latter(0).start.getLine())
 					);
 			for(int i = 1; i < ctx.mse_latter().size(); ++i){
 				add_qua(CQuaFactory.create_qua(
 						ctx.mse_latter(i).start.getType(),
 						compute_result,
 						visitMse_1(ctx.mse_latter(i).mse_1()), 
-						compute_result)
+						compute_result,
+						ctx.mse_latter(i).start.getLine())
 						);
 			}
 			return_result = compute_result;
@@ -771,7 +834,8 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 				add_qua(CQuaFactory.create_qua(
 						QuaType.MATH_REV, 
 						visitTerm(ctx.term()), 
-						return_result));
+						return_result,
+						ctx.start.getLine()));
 			}
 		}
 		return return_result;
@@ -896,19 +960,28 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 						 id_data = new CQuaData();
 				id_data.type = QuaDataType.ID;
 				id_data.str_data_0 = cur_id.getText();
-				add_qua(CQuaFactory.create_qua(QuaType.BASE_ADDRESS, dst_assign, id_data, temp_data));
+				add_qua(CQuaFactory.create_qua(
+						QuaType.BASE_ADDRESS, 
+						dst_assign, 
+						id_data, 
+						temp_data,
+						cur_id.start.getLine()));
 				dst_assign = temp_data;
 			}
 			add_qua(CQuaFactory.create_qua(
 					QuaType.ASSIGN_VALUE, 
 					dst_assign, 
-					visitElement(ctx.element())));
+					visitElement(ctx.element()),
+					ctx.element().start.getLine())
+					);
 		}
 		else{
 			add_qua(CQuaFactory.create_qua(
 					QuaType.ASSIGN_VALUE, 
 					visitPoint_id(ctx.point_id()), 
-					visitElement(ctx.element())));
+					visitElement(ctx.element()),
+					ctx.element().start.getLine()
+					));
 		}
 		return null; 
 	}
@@ -962,7 +1035,10 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 		else if(ctx.function_call() != null){
 			visitFunction_call(ctx.function_call());
 			term_former = get_temp_id();
-			add_qua(CQuaFactory.create_qua(QuaType.GET_RETURN, term_former));
+			add_qua(CQuaFactory.create_qua(
+					QuaType.GET_RETURN, 
+					term_former,
+					ctx.function_call().start.getLine()));
 		}
 		else if(ctx.id() != null){
 			term_former.type = QuaDataType.ID;
@@ -1000,7 +1076,8 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 					QuaType.ADD_SEARCH, 
 					condition_former, 
 					visitElement(ctx.element()),
-					search_condition
+					search_condition,
+					ctx.element().start.getLine()
 					)
 				);
 	}
@@ -1010,7 +1087,11 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 		if(ctx.belong_pair() != null && !ctx.belong_pair().isEmpty()){
 			return_result = get_temp_id();
 			CQuaData search_condition = get_temp_id();
-			add_qua(CQuaFactory.create_qua(QuaType.DEF_SEARCH_CDT, search_condition));
+			add_qua(CQuaFactory.create_qua(
+					QuaType.DEF_SEARCH_CDT, 
+					search_condition, 
+					ctx.belong().start.getLine()
+					));
 			for(int i = 0; i < ctx.belong_pair().size(); ++i){
 				BStarParser.Belong_pairContext cur_pair = ctx.belong_pair(i);
 				visitBelong_pair(cur_pair, search_condition);
@@ -1018,7 +1099,12 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 			//result is search result
 			CQuaData search_result = get_temp_id(),
 					 search_set = visitMse(ctx.mse());
-			add_qua(CQuaFactory.create_qua(QuaType.SET_SEARCH, search_condition, search_set, search_result));
+			add_qua(CQuaFactory.create_qua(
+					QuaType.SET_SEARCH, 
+					search_condition, 
+					search_set, 
+					search_result,
+					ctx.belong().start.getLine()));
 			QuaType search_type = null;
 			if(ctx.belong() != null){
 				search_type = QuaType.SEARCH_ASSIGN;
@@ -1026,7 +1112,12 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 			else{
 				search_type = QuaType.SEARCH_ASSIGN_NOT;
 			}
-			add_qua(CQuaFactory.create_qua(search_type, search_result, term_former, return_result));
+			add_qua(CQuaFactory.create_qua(
+					search_type, 
+					search_result, 
+					term_former, 
+					return_result,
+					ctx.belong().start.getLine()));
 		}
 		else if(ctx.start.getType() == BStarParser.POINT){
 			return_result = get_temp_id();
@@ -1037,7 +1128,8 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 					QuaType.BASE_ADDRESS, 
 					term_former, 
 					cur_id,
-					return_result));
+					return_result,
+					ctx.id().start.getLine()));
 		}
 		else if(ctx.start.getType() == BStarParser.ADDRGET){
 			CQuaData 	pointer_content = get_temp_id(),
@@ -1048,12 +1140,15 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 			add_qua(CQuaFactory.create_qua(
 					QuaType.CONTENT_OF, 
 					term_former, 
-					pointer_content));
+					pointer_content,
+					ctx.id().start.getLine()
+					));
 			add_qua(CQuaFactory.create_qua(
 					QuaType.BASE_ADDRESS,
 					pointer_content,
 					cur_id,
-					return_result
+					return_result,
+					ctx.id().start.getLine()
 					));
 		}
 		return return_result;
@@ -1104,13 +1199,15 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 					QuaType.CDT_DISJ, 
 					first_data, 
 					visitAnd_pro_e(ctx.and_pro_e(1)),
-					return_result));
+					return_result,
+					ctx.and_pro_e(1).start.getLine()));
 			for(int i = 2; i < ctx.and_pro_e().size(); i++){
 				add_qua(CQuaFactory.create_qua(
 						QuaType.CDT_DISJ, 
 						return_result, 
 						visitAnd_pro_e(ctx.and_pro_e(i)),
-						return_result));
+						return_result,
+						ctx.and_pro_e(i).start.getLine()));
 			}
 		}
 		return return_result; 
@@ -1126,9 +1223,10 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 		add_qua(CQuaFactory.create_qua(
 				QuaType.FUNC_DECLARE, 
 				visitPoint_id(ctx.point_id()), 
-				visitType(ctx.type())));
+				visitType(ctx.type()),
+				ctx.point_id().start.getLine()));
 		visitPara_define_list(ctx.para_define_list());
-		add_qua(CQuaFactory.create_qua(QuaType.FUNC_DECLARE_END));
+		add_qua(CQuaFactory.create_qua(QuaType.FUNC_DECLARE_END, -1));
 		return null; 
 	}
 
@@ -1179,19 +1277,27 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 	@Override public CQuaData visitIf_stat(@NotNull BStarParser.If_statContext ctx) { 
 		if(ctx.else_stat() == null){
 			CQuaData end_label = get_label_id();
-			add_qua(CQuaFactory.create_qua(QuaType.IF_NOT, visitPro_e(ctx.pro_e()), end_label));
+			add_qua(CQuaFactory.create_qua(
+					QuaType.IF_NOT, 
+					visitPro_e(ctx.pro_e()), 
+					end_label,
+					ctx.pro_e().start.getLine()));
 			visitStatement(ctx.statement());
-			add_qua(CQuaFactory.create_qua(QuaType.LABEL, end_label));
+			add_qua(CQuaFactory.create_qua(QuaType.LABEL, end_label, -1));
 		}
 		else{
 			CQuaData end_label = get_label_id(),
 					else_label = get_label_id();
-			add_qua(CQuaFactory.create_qua(QuaType.IF_NOT, visitPro_e(ctx.pro_e()), else_label));
+			add_qua(CQuaFactory.create_qua(
+					QuaType.IF_NOT, 
+					visitPro_e(ctx.pro_e()), 
+					else_label,
+					ctx.pro_e().start.getLine()));
 			visitStatement(ctx.statement());
-			add_qua(CQuaFactory.create_qua(QuaType.GOTO, end_label));
-			add_qua(CQuaFactory.create_qua(QuaType.LABEL, else_label));
+			add_qua(CQuaFactory.create_qua(QuaType.GOTO, end_label, -1));
+			add_qua(CQuaFactory.create_qua(QuaType.LABEL, else_label, -1));
 			visitStatement(ctx.else_stat().statement());
-			add_qua(CQuaFactory.create_qua(QuaType.LABEL, end_label));
+			add_qua(CQuaFactory.create_qua(QuaType.LABEL, end_label, -1));
 		}
 		return null; 
 	}

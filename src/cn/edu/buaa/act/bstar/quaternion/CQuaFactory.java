@@ -31,41 +31,45 @@ public class CQuaFactory {
 		token_to_qua.put(BStarParser.UEQU, 				QuaType.CDT_UEQU);
 	}
 	
-	public static CQuaternion create_qua(int in_type, CQuaData in_data_0, CQuaData in_data_1, CQuaData in_data_2){
-		return create_qua(token_to_qua.get(new Integer(in_type)), in_data_0, in_data_1, in_data_2);
+	public static CQuaternion create_qua(int in_type, CQuaData in_data_0, CQuaData in_data_1, CQuaData in_data_2, int in_line_num){
+		return create_qua(token_to_qua.get(new Integer(in_type)), in_data_0, in_data_1, in_data_2, in_line_num);
 	}
 	
-	public static CQuaternion create_qua(int in_type, CQuaData in_data_0, CQuaData in_data_1){
-		return create_qua(token_to_qua.get(new Integer(in_type)), in_data_0, in_data_1);
+	public static CQuaternion create_qua(int in_type, CQuaData in_data_0, CQuaData in_data_1, int in_line_num){
+		return create_qua(token_to_qua.get(new Integer(in_type)), in_data_0, in_data_1, in_line_num);
 	}
 	
-	public static CQuaternion create_qua(QuaType in_type){
+	public static CQuaternion create_qua(QuaType in_type, int in_line_num){
 		CQuaternion return_result = new CQuaternion();
 		return_result.type = in_type;
+		return_result.line_num = in_line_num;
 		return return_result;
 	}
 	
-	public static CQuaternion create_qua(QuaType in_type, CQuaData in_data_0){
+	public static CQuaternion create_qua(QuaType in_type, CQuaData in_data_0, int in_line_num){
 		CQuaternion return_result = new CQuaternion();
 		return_result.type = in_type;
 		return_result.data_0 = in_data_0;
+		return_result.line_num = in_line_num;
 		return return_result;
 	}
 	
-	public static CQuaternion create_qua(QuaType in_type, CQuaData in_data_0, CQuaData in_data_1){
+	public static CQuaternion create_qua(QuaType in_type, CQuaData in_data_0, CQuaData in_data_1, int in_line_num){
 		CQuaternion return_result = new CQuaternion();
 		return_result.type = in_type;
 		return_result.data_0 = in_data_0;
 		return_result.data_1 = in_data_1;
+		return_result.line_num = in_line_num;
 		return return_result;
 	}
 	
-	public static CQuaternion create_qua(QuaType in_type, CQuaData in_data_0, CQuaData in_data_1, CQuaData in_data_2){
+	public static CQuaternion create_qua(QuaType in_type, CQuaData in_data_0, CQuaData in_data_1, CQuaData in_data_2, int in_line_num){
 		CQuaternion return_result = new CQuaternion();
 		return_result.type = in_type;
 		return_result.data_0 = in_data_0;
 		return_result.data_1 = in_data_1;
 		return_result.data_2 = in_data_2;
+		return_result.line_num = in_line_num;
 		return return_result;
 	}
 }

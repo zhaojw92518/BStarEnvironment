@@ -30,4 +30,12 @@ public class CQuaTreeNode {
 		}
 		CGlobalDef.cout_dividing_line();
 	}
+	
+	public LinkedList<CQuaternion> get_quas(){
+		return quas;
+	}
+	
+	public TreeMap<String, CQuaTreeNode> get_include_map(){
+		return include_map;
+	}
 }

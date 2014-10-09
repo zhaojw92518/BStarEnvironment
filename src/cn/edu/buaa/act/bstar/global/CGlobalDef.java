@@ -27,12 +27,16 @@ public class CGlobalDef {
 		debug_console = new CDebugConsole();
 	}
 	
+	public static void stop_debug_console(){
+		debug_console = null;
+	}
+	
 	public static void cout(String in_str){
 		if(debug_console != null){
 			debug_console.add_str(in_str);
 		}
 		else{
-			info_box("Debug Console haven't started");
+			System.out.print(in_str);
 		}
 	}
 	
@@ -48,7 +52,7 @@ public class CGlobalDef {
 	}
 	
 	public static void cout_dividing_line(){
-		cout_end("=========================================================================================");
+		cout_end("==============================================================================================================");
 	}
 
 	public static void info_box(String in_str){

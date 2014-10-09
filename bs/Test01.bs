@@ -15,7 +15,7 @@ ATTRIBUTES
 	
 	const int pi = HALF_CIR;
 OPERATIONS
-	/*double deg_to_reg(double in_value)
+	double deg_to_reg(double in_value)
 	{
 		double return_result;
 		return_result = in_value / DEG_PI;
@@ -25,17 +25,17 @@ OPERATIONS
 	
 	void print_all(set<u_tuple> *in_array){
 		u_tuple* cur_tuple;
-		cur_tuple = (*in_array).<id_0:nil>;
+		cur_tuple.<id_0:nil>:(*in_array);
 		while(true){
 			if(cur_tuple->id_1 == nil){
 				break;
 			}
 			else{
 				printf(cur_tuple->id_1);
-				cur_tuple = (*in_array).<id_0:cur_tuple->id_1>;
+				cur_tuple.<id_0:cur_tuple->id_1>:(*in_array);
 			}
 		}
-	}*/
+	}
 	
 	void main(){
 		/*set<u_tuple> int_array;

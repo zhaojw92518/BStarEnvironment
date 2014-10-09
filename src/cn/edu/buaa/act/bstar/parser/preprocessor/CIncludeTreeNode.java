@@ -101,7 +101,7 @@ public class CIncludeTreeNode {
 			CQuaGenerator qua_generator = new CQuaGenerator();
 			BStarParser code_text_parser = get_parser(code_text_str);
 			ParseTree tree = code_text_parser.code_text();
-			CGlobalDef.cout_end(tree.toStringTree(code_text_parser));
+			//CGlobalDef.cout_end(tree.toStringTree(code_text_parser));
 			qua_generator.visit(tree);
 			return_result = qua_generator.get_quas();
 		}

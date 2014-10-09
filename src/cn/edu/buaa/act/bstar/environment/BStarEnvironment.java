@@ -1,4 +1,4 @@
-package cn.edu.buaa.act.bstar.prover;
+package cn.edu.buaa.act.bstar.environment;
 
 import java.io.File;
 import java.util.Map;
@@ -11,21 +11,59 @@ import cn.edu.buaa.act.bstar.parser.preprocessor.CPreProcessor;
 import cn.edu.buaa.act.bstar.quaternion.CQuaFactory;
 import cn.edu.buaa.act.bstar.quaternion.CQuaTreeNode;
 
-public class BStarProver {
-	public static void test_01(){
-		String input_file_addr = "bs/ProcessManagement.bs";
-		CGlobalDef.init_font();
-		CGlobalDef.start_debug_console();
+public class BStarEnvironment {
+	private String file_addr = null;
+	private CQuaTreeNode qua_tree_root = null;
+	private TreeMap<String, CQuaTreeNode> qua_node_list = null;
+	private boolean is_start_debug_console = true;
+	
+	public BStarEnvironment(String in_file_addr){
+		file_addr = in_file_addr;
+	}
+	
+	public CQuaTreeNode get_qua_tree_root(){
+		return qua_tree_root;
+	}
+	
+	public TreeMap<String, CQuaTreeNode> get_qua_node_list(){
+		return qua_node_list;
+	}
+	
+	public void start_debug_console(){
+		is_start_debug_console = true;
+	}
+	
+	public void stop_debug_console(){
+		is_start_debug_console = false;
+	}
+	
+	public void generate_environment(){
+		if(is_start_debug_console){
+			CGlobalDef.init_font();
+			CGlobalDef.start_debug_console();
+		}
 		CQuaFactory.init_factory();
 		CPreProcessor preprocessor = new CPreProcessor();
-		File file = new File(input_file_addr);
+		File file = new File(file_addr);
 		CFileMgr.set_base_dic(file);
-		CIncludeTreeNode root_node = preprocessor.get_root_node(input_file_addr);
+		CIncludeTreeNode root_node = preprocessor.get_root_node(file_addr);
 		root_node.extand_define_map();
 		root_node.print_all_define_info();
 		root_node.def_replace_all();
-		CQuaTreeNode qua_root_node = root_node.generate_qua_tree();
-		TreeMap<String, CQuaTreeNode> qua_node_map = CIncludeTreeNode.get_include_map();
+		qua_tree_root = root_node.generate_qua_tree();
+		qua_node_list = CIncludeTreeNode.get_include_map();
+		/*for(Map.Entry<String, CQuaTreeNode> cur_entry: qua_node_map.entrySet()){
+			cur_entry.getValue().print_quas();
+		}*/
+	}
+	
+	public static void test_01(String in_file_addr){
+		//String input_file_addr = "bs/Test01.bs";
+		BStarEnvironment cur_evt = new BStarEnvironment(in_file_addr);
+		cur_evt.start_debug_console();
+		cur_evt.generate_environment();
+		CQuaTreeNode qua_root_node = cur_evt.get_qua_tree_root();
+		TreeMap<String, CQuaTreeNode> qua_node_map = cur_evt.get_qua_node_list();
 		for(Map.Entry<String, CQuaTreeNode> cur_entry: qua_node_map.entrySet()){
 			cur_entry.getValue().print_quas();
 		}
@@ -56,7 +94,11 @@ public class BStarProver {
 	}
 	
 	public static void main(String[] args) {
-		test_01();
+		if(args.length < 1){
+			System.err.println("You need to input one more argument.");
+		}
+		else{
+			test_01(args[0]);
+		}
 	}
-
 }

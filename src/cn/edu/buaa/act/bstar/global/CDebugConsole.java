@@ -18,7 +18,7 @@ public class CDebugConsole extends JFrame {
 		super("Debug");
 		this.setLayout(new BorderLayout());
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setSize(800, 600);
+		this.setSize(1000, 600);
 		
 		debug_context.setLineWrap(false);
 		debug_context.setEditable(false);
