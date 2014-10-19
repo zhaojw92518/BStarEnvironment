@@ -27,6 +27,9 @@ public enum QuaType {
 	RETURN,
 	FUNC_CALL,
 	
+	LOOP,
+	LOOP_END,
+	
 	ADDRESS_OF,
 	CONTENT_OF,
 	BASE_ADDRESS,

@@ -491,6 +491,7 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 				 end_label_id = get_label_id();
 		push_start(start_label_id);
 		push_end(end_label_id);
+		add_qua(CQuaFactory.create_qua(QuaType.LOOP, -1));
 		add_qua(CQuaFactory.create_qua(
 				QuaType.LABEL, 
 				start_label_id,
@@ -512,6 +513,7 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 				QuaType.LABEL, 
 				end_label_id,
 				-1));
+		add_qua(CQuaFactory.create_qua(QuaType.LOOP_END, -1));
 		pop_start();
 		pop_end();
 		return null; 
