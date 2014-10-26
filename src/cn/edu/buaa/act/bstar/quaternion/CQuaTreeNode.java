@@ -38,4 +38,8 @@ public class CQuaTreeNode {
 	public TreeMap<String, CQuaTreeNode> get_include_map(){
 		return include_map;
 	}
+	
+	public String get_file_name(){
+		return file_name;
+	}
 }
