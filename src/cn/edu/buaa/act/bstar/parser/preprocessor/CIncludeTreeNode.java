@@ -26,6 +26,7 @@ public class CIncludeTreeNode {
 	private String cv_define_str = null, code_text_str = null, file_name = null;
 	private LinkedList<CIncludeTreeNode> include_list = new LinkedList<>();
 	private boolean is_extanded = false, is_replaced = false;
+	private int code_text_start_line_num = -1;
 	
 	public CIncludeTreeNode(
 			String in_cv_define_str, 
@@ -133,11 +134,21 @@ public class CIncludeTreeNode {
 			include_map.put(file_name, return_result);
 			return_result.add_all_quas(get_cv_define_quas());
 			return_result.add_all_quas(get_code_text_quas());
+			return_result.revize_line_num(code_text_start_line_num);
 			for(CIncludeTreeNode cur_node: include_list){
 				return_result.add_include_map(cur_node.file_name, cur_node.generate_qua_tree());
 			}
 		}
 		return return_result;
+	}
+	
+
+	public int get_code_text_start_line_num() {
+		return code_text_start_line_num;
+	}
+
+	public void set_code_text_start_line_num(int in_code_text_start_line_num) {
+		this.code_text_start_line_num = in_code_text_start_line_num;
 	}
 	
 	//Debug
@@ -157,4 +168,5 @@ public class CIncludeTreeNode {
 		}
 	}
 	//Debug End
+
 }

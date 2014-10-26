@@ -20,6 +20,8 @@ public class CPreProcrVisitor extends BStarBaseVisitor<String>{
 					code_text_start 	= -1, 
 					code_text_end 		= -1;
 	
+	private int code_text_start_line_num = -1;
+	
 	
 	private String def_str_replace(String in_str){
 		CStrReplacer cur_replacer = new CStrReplacer(in_str);
@@ -42,6 +44,10 @@ public class CPreProcrVisitor extends BStarBaseVisitor<String>{
 	
 	public String get_code_text_str(String entire_code_str){
 		return get_sub_str(code_text_start, code_text_end, entire_code_str);
+	}
+	
+	public int get_code_text_line_num(){
+		return code_text_start_line_num;
 	}
 	
 	public LinkedHashMap<String, String> get_define_map(){
@@ -67,6 +73,7 @@ public class CPreProcrVisitor extends BStarBaseVisitor<String>{
 			cv_define_end = ctx.cv_define().stop.getStopIndex() + 1;
 		}
 		if(ctx.code_text() != null){
+			code_text_start_line_num = ctx.code_text().start.getLine();
 			code_text_start = ctx.code_text().start.getStartIndex();
 			code_text_end = ctx.code_text().stop.getStopIndex() + 1;
 		}

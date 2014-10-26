@@ -42,4 +42,13 @@ public class CQuaTreeNode {
 	public String get_file_name(){
 		return file_name;
 	}
+	
+	public void revize_line_num(int in_base_num){
+		in_base_num--;
+		for(CQuaternion cur_qua: quas){
+			if(cur_qua.line_num != -1){
+				cur_qua.line_num += in_base_num ;
+			}
+		}
+	}
 }

@@ -70,6 +70,7 @@ public class CPreProcessor {
 						visitor.get_cv_define_str(code_str), 
 						visitor.get_code_text_str(code_str),
 						visitor.get_define_map());
+				cur_node.set_code_text_start_line_num(visitor.get_code_text_line_num());
 				cur_node.set_file_name(in_file.getCanonicalPath());
 				include_map.put(in_file.getCanonicalPath(), cur_node);
 				for(String cur_str: visitor.includes_list){

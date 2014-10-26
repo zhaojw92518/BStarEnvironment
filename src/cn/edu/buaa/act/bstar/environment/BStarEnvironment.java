@@ -16,6 +16,7 @@ public class BStarEnvironment {
 	private CQuaTreeNode qua_tree_root = null;
 	private TreeMap<String, CQuaTreeNode> qua_node_list = null;
 	private boolean is_start_debug_console = true;
+	private int start_line_num = -1;
 	
 	public BStarEnvironment(String in_file_addr){
 		file_addr = in_file_addr;
