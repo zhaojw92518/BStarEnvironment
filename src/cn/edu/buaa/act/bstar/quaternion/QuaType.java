@@ -72,6 +72,7 @@ public enum QuaType {
 	
 	ASSIGN_VALUE,
 	ASSIGN_ADDR,
+	BEGIN_CALL,
 	CALL_PARA,
 	GET_RETURN
 	;

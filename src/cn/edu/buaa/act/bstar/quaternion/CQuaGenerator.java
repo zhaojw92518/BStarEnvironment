@@ -445,6 +445,7 @@ public class CQuaGenerator extends BStarBaseVisitor<CQuaData>{
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
 	@Override public CQuaData visitFunction_call(@NotNull BStarParser.Function_callContext ctx) { 
+		add_qua(CQuaFactory.create_qua(QuaType.BEGIN_CALL, ctx.id().start.getLine()));
 		visitPara_value_list(ctx.para_value_list());
 		add_qua(CQuaFactory.create_qua(QuaType.FUNC_CALL, visitId(ctx.id()), ctx.id().start.getLine()));
 		return null; 
