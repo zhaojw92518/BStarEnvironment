@@ -6,6 +6,7 @@ import java.util.TreeMap;
 
 import cn.edu.buaa.act.bstar.global.CFileMgr;
 import cn.edu.buaa.act.bstar.global.CGlobalDef;
+import cn.edu.buaa.act.bstar.parser.ProverNode;
 import cn.edu.buaa.act.bstar.parser.preprocessor.CIncludeTreeNode;
 import cn.edu.buaa.act.bstar.parser.preprocessor.CPreProcessor;
 import cn.edu.buaa.act.bstar.quaternion.CQuaFactory;
@@ -15,6 +16,8 @@ public class BStarEnvironment {
 	private String file_addr = null;
 	private CQuaTreeNode qua_tree_root = null;
 	private TreeMap<String, CQuaTreeNode> qua_node_list = null;
+	public ProverNode prover_tree_root = null;
+	public TreeMap<String, ProverNode> prover_node_list = null;
 	private boolean is_start_debug_console = true;
 	private int start_line_num = -1;
 	
@@ -56,6 +59,23 @@ public class BStarEnvironment {
 		/*for(Map.Entry<String, CQuaTreeNode> cur_entry: qua_node_map.entrySet()){
 			cur_entry.getValue().print_quas();
 		}*/
+	}
+	
+	public void generate_prover_tree(){
+		if(is_start_debug_console){
+			CGlobalDef.init_font();
+			CGlobalDef.start_debug_console();
+		}
+		CQuaFactory.init_factory();
+		CPreProcessor preprocessor = new CPreProcessor();
+		File file = new File(file_addr);
+		CFileMgr.set_base_dic(file);
+		CIncludeTreeNode root_node = preprocessor.get_root_node(file_addr);
+		root_node.extand_define_map();
+		root_node.print_all_define_info();
+		root_node.def_replace_all();
+		prover_tree_root = root_node.generate_prover_node();
+		prover_node_list = root_node.get_prover_node_map();
 	}
 	
 	public static void test_01(String in_file_addr){

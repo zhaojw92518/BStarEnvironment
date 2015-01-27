@@ -12,14 +12,20 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import cn.edu.buaa.act.bstar.global.CGlobalDef;
 import cn.edu.buaa.act.bstar.parser.BStarLexer;
 import cn.edu.buaa.act.bstar.parser.BStarParser;
+import cn.edu.buaa.act.bstar.parser.ProverNode;
 import cn.edu.buaa.act.bstar.quaternion.CQuaGenerator;
 import cn.edu.buaa.act.bstar.quaternion.CQuaTreeNode;
 import cn.edu.buaa.act.bstar.quaternion.CQuaternion;
 
 public class CIncludeTreeNode {
 	private static TreeMap<String, CQuaTreeNode> include_map = new TreeMap<>();
+	private static TreeMap<String, ProverNode> prover_node_map = new TreeMap<>();
 	public static TreeMap<String, CQuaTreeNode> get_include_map(){
 		return include_map;
+	}
+	
+	public static TreeMap<String, ProverNode> get_prover_node_map(){
+		return prover_node_map;
 	}
 	
 	private LinkedHashMap<String, String> define_map = null;
@@ -112,6 +118,24 @@ public class CIncludeTreeNode {
 		return return_result;
 	}
 	
+	private ParseTree get_code_text_tree(){
+		ParseTree ret = null;
+		if(code_text_str != null){
+			BStarParser code_text_parser = get_parser(code_text_str);
+			ret = code_text_parser.code_text();
+		}
+		return ret;
+	}
+	
+	private ParseTree get_cv_define_tree(){
+		ParseTree ret = null;
+		if(code_text_str != null){
+			BStarParser cv_define_parser = get_parser(cv_define_str);
+			ret = cv_define_parser.cv_define();
+		}
+		return ret;
+	}
+	
 	private LinkedList<CQuaternion> get_cv_define_quas(){
 		LinkedList<CQuaternion> return_result = null;
 		if(cv_define_str != null){
@@ -140,6 +164,23 @@ public class CIncludeTreeNode {
 			}
 		}
 		return return_result;
+	}
+	
+	public ProverNode generate_prover_node(){
+		ProverNode ret = null;
+		ret = prover_node_map.get(file_name);
+		if(ret == null){
+			ret = new ProverNode(file_name);
+			prover_node_map.put(file_name, ret);
+			ret.cv_define_tree = get_cv_define_tree();
+			ret.code_text_tree = get_code_text_tree();
+			ret.cv_define_str = cv_define_str;
+			ret.code_text_str = code_text_str;
+			for(CIncludeTreeNode cur_node: include_list){
+				ret.insert_node(cur_node.file_name, cur_node.generate_prover_node());
+			}
+		}
+		return ret;
 	}
 	
 

@@ -1,0 +1,27 @@
+MACHINE Test
+//INCLUDE "inc/Test02.bs";
+ATTRIBUTES
+	#define PI 3.14159
+	#define ONE_CIR 2 * PI
+	#define HALF_CIR PI
+	#define DEG_PI 180
+
+	int global_int;
+	
+	typedef struct {
+		int id_0;
+		int id_1; 
+	}u_tuple;
+	
+	const int pi = HALF_CIR;
+OPERATIONS	
+	void main(){
+		int i, ret;
+		i = 0;
+		ret = 0;
+		while(i < 10){
+			ret = ret + i;
+			i = i + 1;
+		}		
+	}
+END
