@@ -143,7 +143,7 @@ continue_stat:
 assign_stat:	point_id ASSIGNMENT element			|
 				point_id (POINT id | ADDRGET id)+
 					ASSIGNMENT element				;
-return_stat:	RETURN (element)?					;
+return_stat:	RETURN (.)?					;
 while_stat:		WHILE L_BRACKET pro_e R_BRACKET statement	;
 if_stat:		IF	  L_BRACKET pro_e R_BRACKET statement 
 					(else_stat)?						;
